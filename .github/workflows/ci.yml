@@ -1,32 +1,40 @@
-name: Input Decision Workflow
-
+name: Input and Continue Workflow
 on:
   push:
     branches:
       - main
 
 jobs:
-  input-decision:
+  run-based-on-input:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        continue-workflow: [true, false] # Define input values as a matrix
+        continue_workflow: [true, false]
 
     steps:
-      - name: Ask for input
-        id: ask-input
-        run: |
-          echo "Is it okay to continue the workflow? (Enter 'yes' or 'no')"
-          echo "::set-output name=continue-workflow::${{ matrix.continue-workflow }}"
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Continue or Stop Workflow
-        if: steps.ask-input.outputs.continue-workflow == 'true'
+      - name: Run some initial setup steps
         run: |
-          echo "The input says it's okay to continue the workflow..."
-          # Add the actions you want to run if the input is true
+          # Add your initial setup steps here
+          echo "Running initial setup..."
 
-      - name: Stop Workflow
-        if: steps.ask-input.outputs.continue-workflow == 'false'
+      - name: Check if workflow should continue
+        if: ${{ matrix.continue_workflow == 'true' }}
         run: |
-          echo "The input says to stop the workflow..."
-          # Add the actions you want to run if the input is false
+          # Perform any checks or actions based on the input value
+          echo "The input value is true. Continuing the workflow..."
+
+      - name: Stop workflow if input is false
+        if: ${{ matrix.continue_workflow != 'true' }}
+        run: |
+          echo "The input value is false. Stopping the workflow..."
+          exit 1
+
+      - name: Continue with additional steps
+        if: ${{ matrix.continue_workflow == 'true' }}
+        run: |
+          # Perform additional steps that should only run if input is true
+          echo "Continuing with additional steps..."
