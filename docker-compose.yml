@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  dev-db:
+    image: mysql:8.0
+    command: '--default-authentication-plugin=mysql_native_password'
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'h#JV4x22ZJnn'
+      MYSQL_DATABASE: 'nest'
+      MYSQL_USER: 'skdarch'
+      MYSQL_PASSWORD: 'HB2yG7Y0&'
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/conf.d:/etc/mysql/conf.d
+      - ./data/logs:/logs
+      - /usr/local/var/mysql:/var/lib/mysql
