@@ -1,0 +1,32 @@
+name: Input Decision Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  input-decision:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        continue-workflow: [true, false] # Define input values as a matrix
+
+    steps:
+      - name: Ask for input
+        id: ask-input
+        run: |
+          echo "Is it okay to continue the workflow? (Enter 'yes' or 'no')"
+          echo "::set-output name=continue-workflow::${{ matrix.continue-workflow }}"
+
+      - name: Continue or Stop Workflow
+        if: steps.ask-input.outputs.continue-workflow == 'true'
+        run: |
+          echo "The input says it's okay to continue the workflow..."
+          # Add the actions you want to run if the input is true
+
+      - name: Stop Workflow
+        if: steps.ask-input.outputs.continue-workflow == 'false'
+        run: |
+          echo "The input says to stop the workflow..."
+          # Add the actions you want to run if the input is false
